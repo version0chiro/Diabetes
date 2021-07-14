@@ -32,25 +32,21 @@ import tensorflow as tf
 from os import walk
 
 f = []
-for (dirpath, dirnames, filenames) in walk('test/normal/'):
+for (dirpath, dirnames, filenames) in walk('dataset/test/DM/'):
     f.extend(filenames)
     break
 
 model = load_model('dibaties_right.h5')
 classes = ['Control', 'DM']
 runTotal = len(f)
-time1 = time.time()
 for i in f:
     cur_img = cv2.imread('dataset/test/DM/'+str(i))
     cur_img = cv2.resize(cur_img, (200, 200))
+    og_img = cur_img.copy()
     cur_img = np.expand_dims(cur_img, axis=0)
-    print(classes[np.argmax(model.predict(cur_img))])
-    image = cv2.putText(cur_img, 'OpenCV', (50, 50), cv2.LINE_AA,
+    ans = (classes[np.argmax(model.predict(cur_img))])
+    image = cv2.putText(og_img, ans, (50, 50), cv2.LINE_AA,
                         1, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.imshow('test', cur_img)
+    cv2.imshow('test', image)
     cv2.waitKey()
 
-timetotal = time.time() - time1
-fps = float(runTotal/timetotal)
-print("FPS=%.2f, total frames = %.0f , time = %.4f seconds" %
-      (fps, runTotal, timetotal))
